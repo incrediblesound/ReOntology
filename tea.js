@@ -1,5 +1,5 @@
 var Type = require('./ontology');
-var getInstance = require('./db.js');
+var db = require('./db.js');
 
 // create a root class //
 var tea = new Type({
@@ -56,17 +56,23 @@ var tieGuanYin = oolong.addInstance({
 	}
 });
 
-// we can create a table and save the entire system to rethinkdb
-tea.createTable('tea').then(function(){
-	tea.save('tea');
-});
+//we can create a table and save the entire system to rethinkdb
+// tea.createTable('tea').then(function(){
+// 	tea.save();
+// });
 
 /**
  * After the data is saved to the database, we can call up all information about
  * an instance with the getInstance function:
  */ 
 setTimeout(function(){
-	getInstance('tea', 'Long Jing', function(err, result){ 
+
+	// db.getSystem('tea', function(result){
+	// 	var tea = result;
+	// 	console.log(tea);
+	// });
+
+	db.getInstance('tea', 'Long Jing', function(err, result){ 
 		console.log(result); 
 	})
 }, 2000);

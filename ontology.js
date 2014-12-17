@@ -6,9 +6,9 @@ var r = require('rethinkdb');
 var Type = function(options){
 	this.name = options.name;
 	this.parent = '';
+	this.size = 0;
 	this.subTypeMap = {};
 	this.subTypeArray = [];
-	this.instancePaths = {};
 	this.features = {};
 	if(options.features){
 		var self = this;
@@ -19,6 +19,7 @@ var Type = function(options){
 };
 
 Type.prototype.addSubType = function(options){
+	this.size++;
 	var subType = new Type(options);
 	subType.parent = this;
 	this.subTypeMap[options.name] = subType;
@@ -27,39 +28,59 @@ Type.prototype.addSubType = function(options){
 };
 
 Type.prototype.addInstance = function(options){
-	var start = [options.name];
-	var parent = this;
-	buildList(start, parent);
-
+	this.size++;
 	var newInstance = new Instance(options);
 	newInstance.parent = this;
 	this.subTypeMap[options.name] = newInstance;
 	this.subTypeArray.push(options.name);
-
-	function buildList(list, parent){
-		if(parent.parent !== ''){
-			list.push(parent.name);
-			return buildList(list, parent.parent);
-		} else {
-			parent.instancePaths[list.shift()] = list;
-		}
-	};
 };
 
 Type.prototype.viewInstance = function(name){
-	var result = { name: this.name }, parent;
-	result = _.merge(result, this.features);
-	var location = this.instancePaths[name];
-	var level = result;
-	for(var i = location.length-1; i >= 0; i--){
-		parent = this.subTypeMap[location[i]];
-		level.subType = _.merge({ name: parent.name }, parent.features);
-		level = level.subType;
+	var path = [], found = false, result;
+	path = traverse(this, path, name);
+
+	var target = getItemFromPath(this, path);
+	target = convert(target);
+	var current = target;
+	while(path.length){
+		path.pop();
+		current.parent = convert(getItemFromPath(this, path));
+		current = current.parent;
 	}
-	var instance = parent.subTypeMap[name];
-	level.instance = _.merge({ item: name }, instance.description);
-	return result;
+	return target;
+
+	function getItemFromPath(root, path){
+		var target = root;
+		for(var i = 0; i < path.length; i++){
+			target = target.subTypeMap[path[i]];
+		}
+		return target;
+	};
+
+	function traverse(current, path, name){
+		var next;
+		if(current.name === name){
+			found = true;
+			return;
+		}
+		else if(!current.subTypeArray || !current.subTypeArray.length){
+			return;
+		} else {
+			_.each(current.subTypeArray, function(subtype){
+				if(!found){
+					next = current.subTypeMap[subtype];
+					path.push(next.name);
+					traverse(next, path, name, found);
+					if(!found){
+						path.pop();
+					}
+				}
+			})
+		}
+		return path;
+	}
 };
+
 
 Type.prototype.typeTree = function(root){
 	var root = root || new Tree(this.name);
@@ -104,6 +125,7 @@ connect().then(function(conn){
  	var copy;
  	if(type instanceof Type){
  		copy = convertType(type);
+ 		console.log(copy);
  		r.table(table).insert(copy).run(conn);
  	} else {
  		copy = convertInstance(type);
@@ -123,10 +145,22 @@ function connect(){
   })
 };
 
+function convert(item){
+	if(item.features !== undefined){
+		return convertType(item);
+	}
+	else if(item.description !== undefined){
+		return convertInstance(item);
+	} else {
+		return false;
+	}
+}
+
 function convertType(type){
 	return {
 		name: type.name,
-		parent: (typeof type.parent === 'string') ? null : type.parent.name,
+		size: type.size,
+		parent: (typeof type.parent === 'string') ? '' : type.parent.name,
 		subTypeArray: type.subTypeArray,
 		features: type.features
 	};
