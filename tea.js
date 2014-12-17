@@ -56,10 +56,11 @@ var tieGuanYin = oolong.addInstance({
 	}
 });
 
-//we can create a table and save the entire system to rethinkdb
-// tea.createTable('tea').then(function(){
-// 	tea.save();
-// });
+
+// we can create a table and save the entire system to rethinkdb
+tea.createTable('tea').then(function(){
+	tea.save();
+});
 
 /**
  * After the data is saved to the database, we can call up all information about
