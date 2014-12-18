@@ -107,11 +107,10 @@ Type.prototype.viewInstance = function(name){
 	path = traverse(this, path, name);
 
 	var target = getItemFromPath(this, path);
-	target = convert(target);
 	var current = target;
 	while(path.length){
 		path.pop();
-		current.parent = convert(getItemFromPath(this, path));
+		current.parent = getItemFromPath(this, path);
 		current = current.parent;
 	}
 	return target;
