@@ -106,7 +106,7 @@ people.search() // this method returns a search object
 Finding Eric's sisters is easy:
 ```javascript
 people.search()
-.relatedTo('Eric') // this method enables use of the sharesAttributes
+.relatedTo('Eric') // this method enables use of the sharesAttributes method
 .hasType('Female') // we want to find the women that share two attributes with Eric
 .sharesAttributes({father: "Robert", mother: "Sylvia"}, function(result){
 	console.log(result) // an array containing the Susan instance
