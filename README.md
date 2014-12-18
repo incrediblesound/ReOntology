@@ -108,7 +108,7 @@ Finding Eric's sisters is easy:
 people.search()
 .relatedTo('Eric') // this method enables use of the sharesAttributes method
 .hasType('Female') // we want to find the women that share two attributes with Eric
-.sharesAttributes({father: "Robert", mother: "Sylvia"}, function(result){
+.sharesAttributes(["father","mother"], function(result){
 	console.log(result) // an array containing the Susan instance
 })
 ```
