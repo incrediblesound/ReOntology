@@ -1,7 +1,7 @@
 ReOntology
 ==========
 
-ReOntology is a type system for JavaScript that conveniently saves to and reads from RethinkDB.
+ReOntology is a type system for JavaScript that conveniently saves to and reads from RethinkDB. It is currently under development and distribution files are not yet generated. A functioning example lives in examples/people.js.
 
 The type system consists of a heirarchy of types that lies over a set of instances. There is a minor semantic distinction in the code which is that a type has "features", abstract qualities that pertain to all subtypes and instances of that type, and an instance has a "description" which is a set of key/value pairs that describe that actual properties of that instance.
 
