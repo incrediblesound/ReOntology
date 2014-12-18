@@ -1,85 +1,114 @@
-This is a type system for JavaScript that conveniently saves to and reads from RethinkDB.
+ReOntology
+==========
 
-In lieu of docs, for the moment I will simply paste in the contents of the example file tea.js:
+ReOntology is a type system for JavaScript that conveniently saves to and reads from RethinkDB.
 
+The type system consists of a heirarchy of types that lies over a set of instances. There is a minor semantic distinction in the code which is that a type has "features", abstract qualities that pertain to all subtypes and instances of that type, and an instance has a "description" which is a set of key/value pairs that describe that actual properties of that instance.
+
+To create an ontology you start with a base class. For now every class and instance must have a unique name, features are optional, and descriptions are necessary to perform search queries.
 ```javascript
-var Type = require('./ontology');
-var getInstance = require('./db.js');
-
-// create a root class //
-var tea = new Type({
-	name: 'Tea',
-	features: [
-	{type: 'Substance', value: 'Plant'},
-	{type: 'Function', value: 'Food:drink'},
-	{type: 'Ingredient:active', value: 'Caffeine'}
-	]
-});
-
-// add a set of subtypes to the class //
-var oolong = tea.addSubType({
-	name: 'Oolong',
-	features: [
-	{type: 'Oxidization', value: 'Medium'}
-	]
-});
-
-var black = tea.addSubType({
-	name: 'Black',
-	features: [
-	{type: 'Oxidization', value: 'Full'}
-	]
-});
-
-var green = tea.addSubType({
-	name: 'Green',
-	features: [
-	{type: 'Oxidization', value: 'Minimal'}
-	]
-});
-
-/** 
- * add instances to the subtypes; instances are actual things whereas classes are
- * abstract classifications of things
- */
-
-var longJing = green.addInstance({
-	name: 'Long Jing',
-	description: {
-		taste: 'Hearty, full and nutty',
-		origin: 'Northeast China',
-		shape: 'Flattened'
+// here is the root of our new class system //
+var people = new Type({
+	name: "Person",
+	features: {
+		Type: "Human"
 	}
-});
-
-var tieGuanYin = oolong.addInstance({
-	name: 'Tie Guan Yin',
-	description: {
-		taste: 'Light and floral',
-		origin: 'Southeast China',
-		shape: 'Rolled'
+})
+```
+To extend a class with sub-classes use the addSubType method:
+```javascript
+var men = people.addSubType({
+	name: 'Male',
+	features: {
+		Gender: 'Male'
 	}
-});
-
-// we can create a table and save the entire system to rethinkdb
-tea.createTable('tea').then(function(){
-	tea.save();
-});
-
-/**
- * After the data is saved to the database, we can call up all information about
- * an instance with the getInstance function:
- */ 
-var longJing;
-db.getInstance('tea', 'Long Jing', function(err, result){ 
-	longJing = result;
+})
+var women = people.addSubType({
+	name: 'Female',
+	features: {
+		Gender: 'Female'
+	}
+})
+```
+To add instances to a type or a sub-type use the addInstance method:
+```javascript
+men.addInstance({
+	name: 'Robert',
+	description: {
+		father: 'James',
+		mother: 'Gladice',
+		sons: ['Eric'],
+		daughters: ['Susan', 'Carol', 'Annabelle']
+	}
 })
 
-/**
- * Or we can reconstruct the entire class heirarchy from the database
- */
-var tea;
-db.getSystem('tea', function(result){
-	tea = result;
-});
+men.addInstance({
+	name: 'Eric',
+	description: {
+		father: 'Robert',
+		mother: 'Sylvia',
+		sons: ['James', 'Wendell'],
+		daughters: ['Emily']
+	}
+})
 
+women.addInstance({
+	name: 'Susan',
+	description: {
+		father: 'Robert',
+		mother: 'Sylvia',
+		sons: null,
+		daughters: null
+	}
+})
+
+women.addInstance({
+	name: 'Samanthat',
+	description: {
+		father: 'Adam',
+		mother: 'Beth',
+		sons: null,
+		daughters: null
+	}
+})
+```
+Now that we have a fleshed out ontology with a root class, two subclasses and four instances, we can save it to rethinkdb:
+```javascript
+// creates a table called "people" in our database and saves the entire heirarchy into that table
+people.createTable('people').then(function(){
+	people.save();
+});
+```
+Now we can reconstruct the entire heirarchy from the database:
+```javascript
+var people;
+// reconstructs a ReOntology tree starting from the root node found in the "people" table
+db.getSystem('people', function(result){
+	people = result;
+})
+```
+Viewing Information
+-------------------
+For now, there are two principle ways of viewing information in your ontology. The first is with the viewInstance method. Calling viewInstance on the root with the name of an instance will return an object that contains the instance data as well as the data for every class that instance belongs to.
+```javascript
+people.viewInstance('Eric') //=> { name: "Eric", description: {...}, parent: { name: "Male"... } }
+```
+A much more interesting way to query the ontology is by using the search object. This object allows you to find instances with specific attributes or instances that share attributes with other instances. Examples of both kinds of queries follows below:
+
+```javascript
+people.search() // this method returns a search object
+.hasType('Male') // we constrain our search to men
+.hasAttributes({father: "James"}, function(result){
+// hasAttributes is a terminating method so it takes a callback
+	console.log(result) // logs the Robert Object
+})
+```
+Finding Eric's sisters is easy:
+```javascript
+people.search()
+.relatedTo('Eric') // this method enables use of the sharesAttributes
+.hasType('Female') // we want to find the women that share two attributes with Eric
+.sharesAttributes({father: "Robert", mother: "Sylvia"}, function(result){
+	console.log(result) // an array containing the Susan instance
+})
+```
