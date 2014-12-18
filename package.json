@@ -1,8 +1,8 @@
 {
-  "name": "Ontology",
-  "version": "0.0.2",
+  "name": "re-ontology",
+  "version": "0.0.3",
   "description": "Ontology implementation",
-  "main": "ontology.js",
+  "main": "dist/Ontology.min.js",
   "scripts": {
     "test": "mocha ./spec/ontology.js"
   },
