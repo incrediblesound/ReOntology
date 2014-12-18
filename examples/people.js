@@ -3,23 +3,23 @@ var db = require('../db.js');
 
 var people = new Type({
 	name: 'Person',
-	features: [
-	{type: 'biological', value: 'human'},
-	]
+	features: {
+		Type: 'person'
+	}
 })
 
 var men = people.addSubType({
 	name: 'Male',
-	features: [
-	{type: 'gender', value: 'male'}
-	]
+	features: {
+	Gender: 'male'
+	}
 })
 
 var women = people.addSubType({
 	name: 'Female',
-	features: [
-	{type: 'gender', value: 'female'}
-	]
+	features: {
+	Gender: 'female'
+	}
 })
 
 men.addInstance({
@@ -62,12 +62,14 @@ women.addInstance({
 	}
 })
 
-people.find()
-.relatedTo('Eric')
-.hasType('Female')
-.sharesAttributes(['father','mother'], function(result){
-	console.log(result);
-});		
+console.log(people.viewInstance('Eric'));
+
+// people.find()
+// .relatedTo('Eric')
+// .hasType('Female')
+// .sharesAttributes(['father','mother'], function(result){
+// 	console.log(result);
+// });		
 
 // people.find().hasType('Female').hasAttributes({father: "Adam"}, function(result){
 // 		console.log(result);

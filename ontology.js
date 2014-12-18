@@ -10,13 +10,7 @@ var Type = function(options){
 	this.size = 0;
 	this.subTypeMap = {};
 	this.subTypeArray = [];
-	this.features = {};
-	if(options.features){
-		var self = this;
-		_.each(options.features, function(feature){
-			self.features[feature.type] = feature.value;
-		})
-	}
+	this.features = options.features || undefined;
 };
 
 Type.prototype.addSubType = function(options){
