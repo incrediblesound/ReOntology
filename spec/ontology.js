@@ -1,7 +1,7 @@
 var path = require('path');
 var expect = require('chai').expect;
 
-var Type = require(path.join(__dirname, '..', './ontology.js'));
+var Type = require(path.join(__dirname, '..', './dist/Ontology.min.js')).Type;
 var db = require(path.join(__dirname, '..', './db.js'));
 
 describe('ontology()', function () {

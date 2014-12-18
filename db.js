@@ -1,7 +1,7 @@
 var r = require('rethinkdb');
 var _ = require('lodash');
-var Instance = require('./instance.js');
-var Type = require('./ontology.js');
+var Type = require('./dist/Ontology.min.js').Type;
+var Instance = require('./dist/Ontology.min.js').Instance;
 
 /**
  * getInstance calls instance data from the database

@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 var Search = function(options){
 	this.root = options.root;
 	this.related = options.related || null;
@@ -52,5 +50,3 @@ Search.prototype.sharesAttributes = function(attributes, cb){
 		_this.root.getByAttributes(map, cb);
 	})
 };
-
-module.exports = Search;

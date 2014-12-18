@@ -6,5 +6,3 @@ var Tree = function(value){
 Tree.prototype.insert = function(tree){
 	this.children.push(tree);
 };
-
-module.exports = Tree;

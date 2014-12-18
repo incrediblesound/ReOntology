@@ -9,5 +9,3 @@ Instance.prototype.getItem = function(name, cb){
 		cb(this);
 	}
 }
-
-module.exports = Instance;
