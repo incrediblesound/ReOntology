@@ -70,9 +70,16 @@ tea.createTable('tea').then(function(){
  * After the data is saved to the database, we can call up all information about
  * an instance with the getInstance function:
  */ 
-setTimeout(function(){
-	getInstance('tea', 'Long Jing', function(err, result){ 
-		console.log(result); 
-	})
-}, 2000);
-```
+var longJing;
+db.getInstance('tea', 'Long Jing', function(err, result){ 
+	longJing = result;
+})
+
+/**
+ * Or we can reconstruct the entire class heirarchy from the database
+ */
+var tea;
+db.getSystem('tea', function(result){
+	tea = result;
+});
+
