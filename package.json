@@ -1,6 +1,6 @@
 {
   "name": "re-ontology",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Ontology builder that saves to and loads from RethinkDB.",
   "main": "dist/Ontology.min.js",
   "scripts": {
