@@ -1,5 +1,5 @@
-var Type = require('./ontology');
-var db = require('./db.js');
+var Type = require('../ontology');
+var db = require('../db.js');
 
 // create a root class //
 var tea = new Type({

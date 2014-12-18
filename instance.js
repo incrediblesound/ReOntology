@@ -4,4 +4,10 @@ var Instance = function(options){
 	this.description = options.description;
 };
 
+Instance.prototype.getItem = function(name, cb){
+	if(this.name === name){
+		cb(this);
+	}
+}
+
 module.exports = Instance;

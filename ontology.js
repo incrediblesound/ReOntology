@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var Tree = require('./tree.js');
 var Instance = require('./instance.js');
+var Search = require('./search.js')
 var r = require('rethinkdb');
 
 var Type = function(options){
@@ -81,6 +82,18 @@ Type.prototype.viewInstance = function(name){
 	}
 };
 
+Type.prototype.getItem = function(name, cb){
+	var _this = this;
+	if(this.name === name){
+		cb(this);
+	}
+	else {
+		_.each(this.subTypeArray, function(subType){
+			_this.subTypeMap[subType].getItem(name, cb);
+		})
+	}
+};
+
 
 Type.prototype.typeTree = function(root){
 	var root = root || new Tree(this.name);
@@ -133,6 +146,40 @@ connect().then(function(conn){
  	}
  };
 };
+
+Type.prototype.getByAttributes = function(map, cb){
+	var children = this.flatten();
+	var results = [], match;
+	var keys = Object.keys(map);
+	_.each(children, function(child){
+		match = true;
+		_.each(keys, function(key){
+			match = match && child.description[key] === map[key];
+		})
+		if(match){
+			results.push(child);
+		}
+	})
+	cb(results);
+};
+
+Type.prototype.flatten = function(){
+	var results = [], child;
+	var _this = this;
+	_.each(this.subTypeArray, function(subType){
+		child = _this.subTypeMap[subType];
+		if(child.description !== undefined){
+			results.push(child);
+		} else {
+			results = results.concat(child.flatten());
+		}
+	})
+	return results;
+}
+
+Type.prototype.find = function(){
+	return new Search({root: this});
+}
 
 module.exports = Type;
 
