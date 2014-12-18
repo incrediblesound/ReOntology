@@ -28,6 +28,13 @@ describe('ontology()', function () {
     expect(db.getSystem).to.be.a('function');
   });
 
+  it('loads an ontology from the database', function (done) {
+    db.getSystem('tea', function(response){
+      expect(response instanceof Type).to.equal(true);
+      done();
+    })
+  });
+
   it('can add subtypes and instances', function () {
     var men = people.addSubType({
       name: 'Male',

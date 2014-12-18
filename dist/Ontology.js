@@ -302,7 +302,7 @@ function getSystem(table, cb){
 		root.subTypeMap = {};
 		root = makeType(root);
 		getSubTypes(table, root, conn, {size: root.size, done: 0}, function(result){
-			console.log(result);
+			cb(result);
 		}, root);
 	})
 };
