@@ -2,7 +2,7 @@ var path = require('path');
 var expect = require('chai').expect;
 
 var Type = require(path.join(__dirname, '..', './dist/Ontology.min.js')).Type;
-var db = require(path.join(__dirname, '..', './db.js'));
+var db = require(path.join(__dirname, '..', './dist/Ontology.min.js')).db;
 
 describe('ontology()', function () {
   'use strict';
@@ -20,6 +20,12 @@ describe('ontology()', function () {
   it('exists', function () {
     expect(Type).to.be.a('function');
     expect(people).to.be.a('object');
+  });
+
+  it('has a db controller', function () {
+    expect(db).to.be.a('object');
+    expect(db.getInstance).to.be.a('function');
+    expect(db.getSystem).to.be.a('function');
   });
 
   it('can add subtypes and instances', function () {

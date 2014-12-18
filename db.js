@@ -1,8 +1,4 @@
 var r = require('rethinkdb');
-var _ = require('lodash');
-var Type = require('./dist/Ontology.min.js').Type;
-var Instance = require('./dist/Ontology.min.js').Instance;
-
 /**
  * getInstance calls instance data from the database
  * Exmple: getInstance('tea', 'Long Jing', function(err, result){ console.log(result) })
@@ -11,11 +7,6 @@ var Instance = require('./dist/Ontology.min.js').Instance;
  * getSystem reconstructs the class tree from the database, giving each element of the
  * tree its proper methods via prototype.
  */
-
-module.exports = {
-	getInstance: getInstance,
-	getSystem: getSystem
-};
 
 function getSystem(table, cb){
 	getRoot(table, function(root, conn){
@@ -158,3 +149,12 @@ function merge(inst, obj){
 	})
 	return inst;
 }
+
+module.exports = {
+	Type: Type,
+	Instance: Instance,
+	db:{
+		getInstance: getInstance,
+		getSystem: getSystem
+	}
+};

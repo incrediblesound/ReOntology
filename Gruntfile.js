@@ -12,7 +12,7 @@ module.exports = function (grunt) {
                 stripBanners: true
             },
             dist: {
-                src: ['instance.js', 'tree.js', 'search.js', 'ontology.js'],
+                src: ['instance.js', 'tree.js', 'search.js', 'ontology.js', 'db.js'],
                 dest: 'dist/Ontology.js'
             }
         },

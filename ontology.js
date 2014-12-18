@@ -210,8 +210,3 @@ function convertInstance(type){
 		description: type.description
 	};
 };
-
-module.exports = {
-	Type: Type,
-	Instance: Instance
-};

@@ -1,12 +1,16 @@
 {
   "name": "re-ontology",
   "version": "0.0.3",
-  "description": "Ontology implementation",
+  "description": "Ontology builder that saves to and loads from RethinkDB.",
   "main": "dist/Ontology.min.js",
   "scripts": {
     "test": "mocha ./spec/ontology.js"
   },
   "author": "James H Edwards",
+  "repository": {
+    "url":"https://github.com/incrediblesound/ReOntology",
+    "type":"git"
+  },
   "license": "ISC",
   "dependencies": {
     "chai": "~1.8.0",
